@@ -1,0 +1,58 @@
+# Linked List Cycle — LeetCode 141
+
+**Pattern:** Fast and Slow Pointers (Floyd's Cycle Detection)
+
+**Approach:** Use two pointers moving at different speeds. If they meet, a cycle exists.
+
+## Java Code
+```java
+public class Solution {
+    public boolean hasCycle(ListNode head) {
+        if (head == null || head.next == null) {
+            return false;
+        }
+
+        ListNode slow = head;
+        ListNode fast = head;
+
+        while (fast != null && fast.next != null) {
+            slow = slow.next;
+            fast = fast.next.next;
+
+            if (slow == fast) {
+                return true;
+            }
+        }
+
+        return false;
+    }
+}
+```
+
+## How It Works
+1. `slow` moves one node at a time.
+2. `fast` moves two nodes at a time.
+3. If they meet (`slow == fast`), the list contains a cycle.
+4. If `fast` reaches `null`, there is no cycle.
+
+## Dry Run
+Example: `3 → 2 → 0 → -4`, where `-4` points back to node `2`.
+
+| Step | Slow | Fast |
+|---|---|---|
+| Start | 3 | 3 |
+| 1 | 2 | 0 |
+| 2 | 0 | 2 |
+| 3 | -4 | -4 |
+
+Both pointers meet, so return `true`.
+
+## Complexity
+- **Time:** \(O(n)\)
+- **Space:** \(O(1)\)
+
+## Key Takeaways
+- `slow == fast` compares node references, not node values.
+- Always check `fast != null && fast.next != null` before moving `fast` two steps.
+- No extra `HashSet` is needed.
+- This technique is called **Floyd's Tortoise and Hare Algorithm**.
