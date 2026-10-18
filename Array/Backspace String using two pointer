@@ -1,0 +1,53 @@
+# Backspace String Compare — LeetCode 844
+
+**Pattern:** Two Pointers  
+**Approach:** Traverse both strings from right to left.
+
+## Approach
+1. Initialize `i = s.length() - 1` and `j = t.length() - 1`.
+2. Use a `back` counter to track pending backspaces.
+3. `#` increments `back`; a normal character with `back > 0` is skipped and decrements `back`.
+4. Compare the next valid characters of both strings.
+5. If they differ, return `false`.
+6. If both pointers finish, return `true`.
+
+## Java Code
+
+```java
+class Solution {
+    public boolean backspaceCompare(String s, String t) {
+        int i = s.length() - 1;
+        int j = t.length() - 1;
+
+        while (true) {
+            int back = 0;
+
+            while (i >= 0 && (s.charAt(i) == '#' || back > 0)) {
+                if (s.charAt(i) == '#')
+                    back++;
+                else
+                    back--;
+                i--;
+            }
+
+            back = 0;
+
+            while (j >= 0 && (t.charAt(j) == '#' || back > 0)) {
+                if (t.charAt(j) == '#')
+                    back++;
+                else
+                    back--;
+                j--;
+            }
+
+            if (i >= 0 && j >= 0 && s.charAt(i) == t.charAt(j)) {
+                i--;
+                j--;
+            } else {
+                break;
+            }
+        }
+
+        return i == -1 && j == -1;
+    }
+}
