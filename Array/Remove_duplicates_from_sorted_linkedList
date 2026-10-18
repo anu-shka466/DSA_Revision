@@ -1,0 +1,31 @@
+# Remove Duplicates from Sorted List — LeetCode 83
+
+**Pattern:** Linked List  
+**Approach:** In-place pointer manipulation
+
+## Approach
+1. Initialize `temp = head`.
+2. Traverse while `temp != null` and `temp.next != null`.
+3. If `temp.val == temp.next.val`, skip the duplicate:
+   `temp.next = temp.next.next`
+4. Otherwise, move forward: `temp = temp.next`.
+5. Return `head`.
+
+## Java Code
+
+```java
+class Solution {
+    public ListNode deleteDuplicates(ListNode head) {
+        ListNode temp = head;
+
+        while (temp != null && temp.next != null) {
+            if (temp.val == temp.next.val) {
+                temp.next = temp.next.next;
+            } else {
+                temp = temp.next;
+            }
+        }
+
+        return head;
+    }
+}
