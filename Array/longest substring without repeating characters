@@ -1,0 +1,62 @@
+# Longest Substring Without Repeating Characters — LeetCode 3
+
+**Pattern:** Variable-Size Sliding Window + HashMap
+
+**Approach:** Maintain a window containing unique characters. If the current character already exists in the window, shrink it from the left until that character is removed. Then add the current character and update the maximum length.
+
+## Java Code
+```java
+class Solution {
+    public int lengthOfLongestSubstring(String s) {
+        int l = 0;
+        int n = s.length();
+        int r = 0;
+        int maxlen = 0;
+
+        HashMap<Character, Integer> map = new HashMap<>();
+
+        while (r < n) {
+            char ch = s.charAt(r);
+
+            while (map.containsKey(ch)) {
+                char left = s.charAt(l);
+                map.remove(left);
+                l++;
+            }
+
+            map.put(ch, 1);
+            maxlen = Math.max(maxlen, r - l + 1);
+            r++;
+        }
+
+        return maxlen;
+    }
+}
+```
+
+## Dry Run
+**Input:** `s = "abcabcbb"`
+
+| Current Character | Valid Window | Maximum Length |
+|---|---|---:|
+| `a` | `a` | 1 |
+| `b` | `ab` | 2 |
+| `c` | `abc` | 3 |
+| `a` | `bca` | 3 |
+| `b` | `cab` | 3 |
+| `c` | `abc` | 3 |
+
+**Output:** `3`
+
+## Complexity
+- **Time:** \(O(n)\) — each character enters and leaves the window at most once.
+- **Space:** \(O(\min(n, |\Sigma|))\) — stores distinct characters in the window.
+
+## Key Takeaways
+- The window must contain **no duplicate characters**.
+- Use `while (map.containsKey(ch))` to remove characters until the duplicate disappears.
+- Since each character is unique in the window, a `HashSet` is also sufficient.
+- Window length = `r - l + 1`.
+- Initialize `maxlen = 0` to handle an empty string naturally.
+
+**Note:** Your original code also works; the frequency counts are unnecessary because each character is removed completely when shrinking the window.
