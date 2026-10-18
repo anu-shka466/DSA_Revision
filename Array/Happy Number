@@ -1,0 +1,48 @@
+# Find the Duplicate Number — LeetCode 287
+
+**Pattern:** Fast and Slow Pointers (Floyd's Cycle Detection)
+
+**Approach:** Treat each array value as the index of the next element. The duplicate creates a cycle. First find the meeting point, then locate the cycle's entrance.
+
+## Java Code
+```java
+class Solution {
+    public int findDuplicate(int[] nums) {
+        int slow = nums[0];
+        int fast = nums[0];
+
+        // Find the meeting point
+        do {
+            slow = nums[slow];
+            fast = nums[nums[fast]];
+        } while (slow != fast);
+
+        // Find the cycle entrance
+        slow = nums[0];
+
+        while (slow != fast) {
+            slow = nums[slow];
+            fast = nums[fast];
+        }
+
+        return slow;
+    }
+}
+```
+
+## How It Works
+1. `slow` moves one step: `nums[slow]`.
+2. `fast` moves two steps: `nums[nums[fast]]`.
+3. When they meet, reset `slow` to `nums[0]`.
+4. Move both pointers one step at a time.
+5. Their next meeting point is the duplicate number.
+
+## Complexity
+- **Time:** O(n)
+- **Space:** O(1)
+
+## Key Takeaways
+- Do not modify the array.
+- Do not use a `HashSet` because extra space must be constant.
+- The values range from `1` to `n`, so they can be treated as next-index links.
+- This problem uses the same cycle-detection concept as Linked List Cycle II.
