@@ -1,0 +1,45 @@
+# Count Triplets with Sum Smaller Than Target
+
+**Pattern:** Sorting + Two Pointers
+
+## Approach
+1. Sort the array.
+2. Fix the first element using `i`.
+3. Initialize `low = i + 1` and `high = n - 1`.
+4. Calculate `sum = nums[i] + nums[low] + nums[high]`.
+5. If `sum < target`:
+   - All elements from `low + 1` to `high` form valid triplets with `nums[i]` and `nums[low]`.
+   - Add `high - low` to `count`.
+   - Increment `low`.
+6. Otherwise, decrement `high`.
+7. Return `count`.
+
+## Java Code
+
+```java
+class Solution {
+    int countTriplets(int target, int nums[]) {
+        int n = nums.length;
+        int count = 0;
+
+        Arrays.sort(nums);
+
+        for (int i = 0; i < n - 2; i++) {
+            int low = i + 1;
+            int high = n - 1;
+
+            while (low < high) {
+                int sum = nums[i] + nums[low] + nums[high];
+
+                if (sum < target) {
+                    count += high - low;
+                    low++;
+                } else {
+                    high--;
+                }
+            }
+        }
+
+        return count;
+    }
+}
