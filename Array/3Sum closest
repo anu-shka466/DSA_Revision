@@ -1,0 +1,70 @@
+# 3Sum Closest — LeetCode 16
+
+**Pattern:** Sorting + Two Pointers
+
+## Approach
+1. Sort the array.
+2. Initialize `sum` with the first three elements.
+3. Fix `nums[i]`, then initialize `low = i + 1` and `high = n - 1`.
+4. Calculate `newsum = nums[i] + nums[low] + nums[high]`.
+5. Update `sum` if `newsum` is closer to `target`.
+6. If `newsum == target`, return immediately.
+7. If `newsum > target`, decrement `high`; otherwise, increment `low`.
+8. Return the closest `sum`.
+
+## Java Code
+
+class Solution {
+    public int threeSumClosest(int[] nums, int target) {
+        Arrays.sort(nums);
+        int sum = nums[0] + nums[1] + nums[2];
+
+        for (int i = 0; i < nums.length - 2; i++) {
+            if (i > 0 && nums[i] == nums[i - 1])
+                continue;
+
+            int low = i + 1;
+            int high = nums.length - 1;
+
+            while (low < high) {
+                int newsum = nums[i] + nums[low] + nums[high];
+
+                if (newsum == target)
+                    return newsum;
+
+                if (Math.abs(newsum - target) < Math.abs(sum - target))
+                    sum = newsum;
+
+                if (newsum > target)
+                    high--;
+                else
+                    low++;
+            }
+        }
+
+        return sum;
+    }
+}
+
+## Dry Run
+
+**Input:** `nums = [-1, 2, 1, -4]`, `target = 1`
+
+Sorted array: `[-4, -1, 1, 2]`
+
+- `-4 + (-1) + 2 = -3` → difference `4`
+- `-4 + 1 + 2 = -1` → difference `2`
+- `-1 + 1 + 2 = 2` → difference `1`
+
+**Output:** `2`
+
+## Complexity
+- **Time:** `O(n²)`
+- **Space:** `O(log n)` auxiliary space typically for sorting.
+
+## Key Takeaways
+- Sort first to use two pointers.
+- Track the **closest sum**, not the individual numbers.
+- Compare distances using `Math.abs(newsum - target)`.
+- Move `high` left if the sum is too large; otherwise, move `low` right.
+- Return immediately when the sum equals the target.
