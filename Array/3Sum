@@ -1,0 +1,69 @@
+# 3Sum — LeetCode 15
+
+**Pattern:** Sorting + Two Pointers  
+**Approach:** Fix one element and solve Two Sum for the remaining array.
+
+## Approach
+1. Sort the array.
+2. Iterate through the array, fixing `nums[i]`.
+3. Skip duplicate fixed elements: `if (i > 0 && nums[i] == nums[i-1]) continue`.
+4. Set `target = -nums[i]`, `low = i + 1`, `high = n - 1`.
+5. If `nums[low] + nums[high] == target`:
+   - Add the triplet to `ans`.
+   - Move both pointers inward.
+   - Skip duplicate values for both pointers.
+6. If the sum is greater than target, decrement `high`.
+7. Otherwise, increment `low`.
+
+## Java Code
+
+```java
+class Solution {
+    public List<List<Integer>> threeSum(int[] nums) {
+        List<List<Integer>> ans = new ArrayList<>();
+        Arrays.sort(nums);
+        int n = nums.length;
+
+        for (int i = 0; i < n - 2; i++) {
+            if (i > 0 && nums[i] == nums[i - 1])
+                continue;
+
+            int target = -nums[i];
+            twoSum(i, nums, target, n, ans);
+        }
+
+        return ans;
+    }
+
+    public void twoSum(int i, int[] nums, int target,
+                       int n, List<List<Integer>> ans) {
+        int low = i + 1;
+        int high = n - 1;
+
+        while (low < high) {
+            int sum = nums[low] + nums[high];
+
+            if (sum == target) {
+                ans.add(Arrays.asList(
+                    nums[i], nums[low], nums[high]
+                ));
+
+                low++;
+                high--;
+
+                while (low < high &&
+                       nums[low] == nums[low - 1])
+                    low++;
+
+                while (low < high &&
+                       nums[high] == nums[high + 1])
+                    high--;
+
+            } else if (sum > target) {
+                high--;
+            } else {
+                low++;
+            }
+        }
+    }
+}
