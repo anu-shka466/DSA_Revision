@@ -1,0 +1,60 @@
+# Longest Substring with K Distinct Characters — GFG
+
+**Pattern:** Variable-Size Sliding Window + HashMap
+
+**Approach:** Expand the window by adding characters and tracking their frequencies in a `HashMap`. If the window contains more than `k` distinct characters, shrink it from the left. Update the maximum length only when the window contains exactly `k` distinct characters.
+
+## Java Code
+```java
+class Solution {
+    public int longestKSubstr(String s, int k) {
+        int left = 0;
+        HashMap<Character, Integer> map = new HashMap<>();
+        int maxlen = -1;
+
+        for (int i = 0; i < s.length(); i++) {
+            char ch = s.charAt(i);
+            map.put(ch, map.getOrDefault(ch, 0) + 1);
+
+            while (map.size() > k) {
+                char leftchar = s.charAt(left);
+                map.put(leftchar, map.get(leftchar) - 1);
+
+                if (map.get(leftchar) == 0) {
+                    map.remove(leftchar);
+                }
+
+                left++;
+            }
+
+            if (map.size() == k) {
+                maxlen = Math.max(maxlen, i - left + 1);
+            }
+        }
+
+        return maxlen;
+    }
+}
+```
+
+## Dry Run
+**Input:** `s = "aabacbebebe", k = 3`
+
+- Expand the window and count each character's frequency.
+- Shrink the window whenever distinct characters exceed `3`.
+- Track the longest window containing exactly `3` distinct characters.
+
+**Output:** `7`
+
+Longest valid substring: `"cbebebe"`.
+
+## Complexity
+- **Time:** \(O(n)\) — each pointer moves forward at most `n` times.
+- **Space:** \(O(k)\) — the map stores at most `k + 1` distinct characters temporarily.
+
+## Key Takeaways
+- `map.size()` gives the number of distinct characters.
+- Store **frequencies**, not just whether a character exists.
+- Remove a character from the map when its frequency becomes `0`.
+- Update `maxlen` only when `map.size() == k`.
+- Initialize `maxlen = -1` because the problem requires `-1` when no valid substring exists.
