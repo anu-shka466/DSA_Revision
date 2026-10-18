@@ -1,0 +1,62 @@
+# Palindrome Linked List — LeetCode 234
+
+**Pattern:** ArrayList + Two Pointers
+
+**Approach:** Copy linked-list values into an `ArrayList`, then compare elements from both ends using two pointers.
+
+## Java Code
+```java
+class Solution {
+    public boolean isPalindrome(ListNode head) {
+        ArrayList<Integer> ls = new ArrayList<>();
+
+        ListNode temp = head;
+
+        while (temp != null) {
+            ls.add(temp.val);
+            temp = temp.next;
+        }
+
+        int left = 0;
+        int right = ls.size() - 1;
+
+        while (left <= right) {
+            if (!ls.get(left).equals(ls.get(right))) {
+                return false;
+            }
+
+            left++;
+            right--;
+        }
+
+        return true;
+    }
+}
+```
+
+## How It Works
+1. Traverse the linked list and store each value in an `ArrayList`.
+2. Initialize `left = 0` and `right = ls.size() - 1`.
+3. Compare values at both pointers.
+4. If they differ, return `false`.
+5. Move `left` forward and `right` backward.
+6. If all pairs match, return `true`.
+
+## Example
+**Input:** `1 → 2 → 2 → 1`
+
+ArrayList: `[1, 2, 2, 1]`
+
+- Compare `1` and `1` → match.
+- Compare `2` and `2` → match.
+
+**Output:** `true`
+
+## Complexity
+- **Time:** \(O(n)\)
+- **Space:** \(O(n)\)
+
+## Key Takeaways
+- An `ArrayList` allows easy access to elements from both ends.
+- Use `.equals()` to compare `Integer` values safely.
+- An alternative solution uses slow/fast pointers and reverses the second half to achieve \(O(1)\) extra space.
