@@ -1,0 +1,56 @@
+# Shortest Unsorted Continuous Subarray — LeetCode 581
+
+**Pattern:** Array + Two Pointers  
+**Approach:** Find boundaries, then expand using minimum and maximum.
+
+## Approach
+1. Find `low`: the first index where `nums[i] > nums[i + 1]`.
+2. Find `high`: the last index where `nums[i - 1] > nums[i]`.
+3. If `low >= high`, the array is already sorted. Return `0`.
+4. Find the minimum and maximum elements within `nums[low...high]`.
+5. Expand `low` left while the previous element is greater than `min`.
+6. Expand `high` right while the next element is smaller than `max`.
+7. Return `high - low + 1`.
+
+## Java Code
+
+```java
+class Solution {
+    public int findUnsortedSubarray(int[] nums) {
+        int n = nums.length;
+        int low = n - 1;
+        int high = 0;
+
+        for (int i = 0; i < n - 1; i++) {
+            if (nums[i] > nums[i + 1]) {
+                low = Math.min(low, i);
+            }
+        }
+
+        for (int i = n - 1; i > 0; i--) {
+            if (nums[i - 1] > nums[i]) {
+                high = Math.max(high, i);
+            }
+        }
+
+        if (low >= high) return 0;
+
+        int min = nums[low];
+        int max = nums[low];
+
+        for (int i = low; i <= high; i++) {
+            min = Math.min(min, nums[i]);
+            max = Math.max(max, nums[i]);
+        }
+
+        while (low > 0 && nums[low - 1] > min) {
+            low--;
+        }
+
+        while (high < n - 1 && nums[high + 1] < max) {
+            high++;
+        }
+
+        return high - low + 1;
+    }
+}
