@@ -1,0 +1,83 @@
+# Permutation in String — LeetCode 567
+
+**Pattern:** Fixed-Size Sliding Window + Frequency Array
+
+## Approach
+- If `s1.length() > s2.length()`, return `false`.
+- Use `req[256]` to track character-frequency differences.
+- Decrease counts for characters in `s1`.
+- Increase counts for characters in the first window of `s2`.
+- Slide the window one character at a time:
+  - Add the incoming character.
+  - Remove the outgoing character.
+- If every count in `req` is non-negative, the current window contains a permutation of `s1`.
+
+## Java Code
+```java
+class Solution {
+    public boolean checkInclusion(String s1, String s2) {
+        if (s1.length() > s2.length()) return false;
+
+        int[] req = new int[256];
+
+        for (int i = 0; i < s1.length(); i++) {
+            req[s1.charAt(i)]--;
+        }
+
+        int l = 0;
+        int h = s1.length() - 1;
+
+        for (int i = l; i <= h; i++) {
+            req[s2.charAt(i)]++;
+        }
+
+        if (isMatches(req)) return true;
+
+        h++;
+
+        while (h < s2.length()) {
+            req[s2.charAt(h)]++; // Incoming character
+            req[s2.charAt(l)]--; // Outgoing character
+
+            l++;
+            h++;
+
+            if (isMatches(req)) return true;
+        }
+
+        return false;
+    }
+
+    public boolean isMatches(int[] req) {
+        for (int i = 0; i < 256; i++) {
+            if (req[i] < 0) return false;
+        }
+        return true;
+    }
+}
+```
+
+## Dry Run
+
+**Input:** `s1 = "ab"`, `s2 = "eidbaooo"`
+
+Initially, `req['a'] = -1` and `req['b'] = -1`. Other counts are `0`.
+
+| Window | Result |
+|---|---|
+| `"ei"` | No match |
+| `"id"` | No match |
+| `"db"` | No match |
+| `"ba"` | Match — return `true` |
+
+For the window `"ba"`, the additions for `b` and `a` cancel out their negative counts, so every value in `req` is non-negative.
+
+## Complexity
+- **Time:** \(O(n + 256n) = O(n)\), where \(n\) is the length of `s2` (the alphabet size is fixed).
+- **Space:** \(O(1)\), because the array always contains 256 entries.
+
+## Key Takeaways
+- The window size is always `s1.length()`.
+- A permutation must contain exactly the same character frequencies.
+- Sliding the window avoids recounting every character from scratch.
+- **Important:** This `req[256]` approach assumes characters fit in the range `0–255`, such as standard ASCII. For general Unicode characters, use a different frequency representation.
