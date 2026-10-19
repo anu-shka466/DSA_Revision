@@ -1,0 +1,75 @@
+# Reorder List — LeetCode 143
+
+**Pattern:** Fast and Slow Pointers + Reverse Linked List + Merge Two Lists
+
+**Approach:** Divide the list into two halves, reverse the second half, then merge the two halves alternately.
+
+## Java Code
+```java
+class Solution {
+    public void reorderList(ListNode head) {
+        if (head == null || head.next == null) return;
+
+        // 1. Find the middle
+        ListNode slow = head;
+        ListNode fast = head;
+
+        while (fast != null && fast.next != null) {
+            slow = slow.next;
+            fast = fast.next.next;
+        }
+
+        // 2. Split the list
+        fast = slow.next;
+        slow.next = null;
+
+        // 3. Reverse the second half
+        ListNode prev = null;
+
+        while (fast != null) {
+            ListNode next = fast.next;
+            fast.next = prev;
+            prev = fast;
+            fast = next;
+        }
+
+        // 4. Merge both halves alternately
+        ListNode temp1 = head;
+        ListNode temp2 = prev;
+
+        while (temp2 != null) {
+            ListNode first = temp1.next;
+            ListNode sec = temp2.next;
+
+            temp1.next = temp2;
+            temp2.next = first;
+
+            temp1 = first;
+            temp2 = sec;
+        }
+    }
+}
+```
+
+## Dry Run
+**Input:** `1 → 2 → 3 → 4 → 5`
+
+1. **Split:** `1 → 2 → 3` and `4 → 5`
+2. **Reverse second half:** `1 → 2 → 3` and `5 → 4`
+3. **Merge alternately:**
+
+   `1 → 5 → 2 → 4 → 3`
+
+**Output:** `[1,5,2,4,3]`
+
+## Complexity
+- **Time:** \(O(n)\)
+- **Space:** \(O(1)\)
+
+## Key Takeaways
+- Use slow/fast pointers to find the middle.
+- Break the list into two halves using `slow.next = null`.
+- Reverse the second half in place.
+- Merge one node from each half alternately.
+- Save `first` and `sec` before changing links to avoid losing the remaining nodes.
+- The node values remain unchanged; only links are modified.
