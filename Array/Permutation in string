@@ -1,0 +1,64 @@
+# Permutation in String — LeetCode 567
+
+**Pattern:** Fixed-Size Sliding Window + Character Frequency
+
+**Approach:** Count the frequency of each character in `s1`. Then check every substring of `s2` with length `s1.length()`. If both frequency maps match, that substring is a permutation of `s1`.
+
+## Java Code
+```java
+class Solution {
+    public boolean checkInclusion(String s1, String s2) {
+        HashMap<Character, Integer> s1map = new HashMap<>();
+
+        for (int i = 0; i < s1.length(); i++) {
+            s1map.put(s1.charAt(i),
+                s1map.getOrDefault(s1.charAt(i), 0) + 1);
+        }
+
+        for (int i = 0; i <= s2.length() - s1.length(); i++) {
+            HashMap<Character, Integer> s2map = new HashMap<>();
+
+            for (int j = 0; j < s1.length(); j++) {
+                char ch = s2.charAt(i + j);
+                s2map.put(ch, s2map.getOrDefault(ch, 0) + 1);
+            }
+
+            if (ismatches(s1map, s2map)) {
+                return true;
+            }
+        }
+
+        return false;
+    }
+
+    public boolean ismatches(
+        HashMap<Character, Integer> s1map,
+        HashMap<Character, Integer> s2map
+    ) {
+        return s1map.equals(s2map);
+    }
+}
+```
+
+## Dry Run
+**Input:** `s1 = "ab"`, `s2 = "eidbaooo"`
+
+- Window `"ei"` → no match.
+- Window `"id"` → no match.
+- Window `"db"` → no match.
+- Window `"ba"` → frequencies match `"ab"`.
+
+**Output:** `true`
+
+## Complexity
+Let \(n = s2.length()\) and \(m = s1.length()\).
+
+- **Time:** \(O(n \cdot m)\) — each window is rebuilt and compared.
+- **Space:** \(O(m)\) — frequency maps.
+
+## Key Takeaways
+- A permutation has the **same character frequencies** as the original string.
+- Every candidate window must have length `s1.length()`.
+- `HashMap.equals()` compares both keys and their frequencies.
+- Your original `ismatches()` has a bug: `getOrDefault(ch, -1)` should not use `-1`; missing characters should count as `0`. Comparing maps directly avoids this issue.
+- For an optimized solution, slide the window by updating character counts instead of rebuilding the map each time.
