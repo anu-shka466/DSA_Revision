@@ -1,0 +1,53 @@
+# Max Consecutive Ones III — LeetCode 1004
+
+**Pattern:** Variable-Size Sliding Window
+
+**Approach:** Maintain a window containing at most `k` zeros. Count zeros as `right` moves forward. If zeros exceed `k`, move `low` forward and remove the leftmost zero from the count when necessary.
+
+## Java Code
+```java
+class Solution {
+    public int longestOnes(int[] nums, int k) {
+        int zeros = 0;
+        int maxlen = 0;
+        int low = 0;
+
+        for (int i = 0; i < nums.length; i++) {
+            if (nums[i] == 0) {
+                zeros++;
+            }
+
+            if (zeros <= k) {
+                maxlen = Math.max(maxlen, i - low + 1);
+            } else {
+                if (nums[low] == 0) {
+                    zeros--;
+                }
+                low++;
+            }
+        }
+
+        return maxlen;
+    }
+}
+```
+
+## Dry Run
+**Input:** `nums = [1,1,1,0,0,0,1,1,1,1,0], k = 2`
+
+- The window can contain at most two zeros.
+- When the third zero enters, move `low` forward to shrink the window.
+- Continue expanding while maintaining the zero limit.
+
+**Output:** `6`
+
+## Complexity
+- **Time:** \(O(n)\)
+- **Space:** \(O(1)\)
+
+## Key Takeaways
+- `zeros` tracks the number of zeros in the current window.
+- A valid window contains at most `k` zeros.
+- Window length = `i - low + 1`.
+- Each pointer moves forward at most `n` times.
+- Your approach is valid: it shrinks the window by one position whenever the zero limit is exceeded.
