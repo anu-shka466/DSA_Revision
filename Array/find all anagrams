@@ -1,0 +1,97 @@
+# Find All Anagrams in a String — LeetCode 438
+
+**Pattern:** Fixed-Size Sliding Window + Frequency Array
+
+## Approach
+- If `s.length() < p.length()`, return an empty list.
+- Decrease the frequency count for each character in `p`.
+- Add the first window of `s` to the frequency array.
+- If every count is non-negative, the window is an anagram of `p`; store its starting index.
+- Slide the window:
+  - Add the incoming character.
+  - Remove the outgoing character.
+  - Check the frequency array and store the new starting index if it matches.
+
+## Java Code
+
+```java
+class Solution {
+    public List<Integer> findAnagrams(String s, String p) {
+        List<Integer> ans = new ArrayList<>();
+
+        if (s.length() < p.length()) return ans;
+
+        int[] req = new int[256];
+
+        for (int i = 0; i < p.length(); i++) {
+            req[p.charAt(i)]--;
+        }
+
+        int l = 0;
+        int h = p.length() - 1;
+
+        // Build the first window
+        for (int i = l; i <= h; i++) {
+            req[s.charAt(i)]++;
+        }
+
+        if (isMatches(req)) {
+            ans.add(l);
+        }
+
+        h++;
+
+        // Slide the window
+        while (h < s.length()) {
+            req[s.charAt(h)]++; // Incoming character
+            req[s.charAt(l)]--; // Outgoing character
+
+            l++;
+            h++;
+
+            if (isMatches(req)) {
+                ans.add(l);
+            }
+        }
+
+        return ans;
+    }
+
+    public boolean isMatches(int[] req) {
+        for (int i = 0; i < 256; i++) {
+            if (req[i] < 0) return false;
+        }
+        return true;
+    }
+}
+```
+
+## Dry Run
+
+**Input:** `s = "cbaebabacd"`, `p = "abc"`
+
+Window size = `3`
+
+| Start index | Window | Anagram? |
+|---:|---|---|
+| 0 | `"cba"` | Yes |
+| 1 | `"bae"` | No |
+| 2 | `"aeb"` | No |
+| 3 | `"eba"` | No |
+| 4 | `"bab"` | No |
+| 5 | `"aba"` | No |
+| 6 | `"bac"` | Yes |
+| 7 | `"acd"` | No |
+
+**Output:** `[0, 6]`
+
+## Complexity
+- **Time:** \(O(n)\), where \(n = s.length()\). The frequency check examines 256 entries per window, which is constant work for a fixed-size array.
+- **Space:** \(O(1)\) auxiliary space for the frequency array, excluding the output list. The output list can take \(O(n)\) space in the worst case.
+
+## Key Takeaways
+- This problem uses the same pattern as **Permutation in String (567)**.
+- The window size is always `p.length()`.
+- Instead of returning `true` for the first match, collect **every matching start index**.
+- `l` is the starting index of the current window.
+- **Character assumption:** `req[256]` works for ASCII-range characters. For arbitrary Unicode characters, use a different frequency representation.
