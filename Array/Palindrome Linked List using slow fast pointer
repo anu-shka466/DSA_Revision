@@ -1,0 +1,70 @@
+# Palindrome Linked List — LeetCode 234
+
+**Pattern:** Fast and Slow Pointers + Reverse Linked List
+
+**Approach:** Find the middle using slow/fast pointers, reverse the second half, then compare both halves node by node. This achieves constant extra space.
+
+## Java Code
+```java
+class Solution {
+    public boolean isPalindrome(ListNode head) {
+        ListNode slow = head;
+        ListNode fast = head;
+
+        // Find the middle
+        while (fast != null && fast.next != null) {
+            slow = slow.next;
+            fast = fast.next.next;
+        }
+
+        // Skip the middle node for odd-length lists
+        if (fast != null) {
+            slow = slow.next;
+        }
+
+        // Reverse the second half
+        ListNode prev = null;
+
+        while (slow != null) {
+            ListNode next = slow.next;
+            slow.next = prev;
+            prev = slow;
+            slow = next;
+        }
+
+        // Compare both halves
+        while (prev != null) {
+            if (prev.val != head.val) {
+                return false;
+            }
+
+            prev = prev.next;
+            head = head.next;
+        }
+
+        return true;
+    }
+}
+```
+
+## Dry Run
+**Input:** `1 → 2 → 2 → 1`
+
+1. Find the middle: `slow` reaches the third node (`2`).
+2. Reverse the second half: `1 → 2`.
+3. Compare:
+   - `1 == 1` ✓
+   - `2 == 2` ✓
+
+**Output:** `true`
+
+## Complexity
+- **Time:** \(O(n)\)
+- **Space:** \(O(1)\)
+
+## Key Takeaways
+- `slow` moves one step; `fast` moves two.
+- If `fast != null` after finding the middle, the list has odd length, so skip the middle node.
+- Reverse the second half using three pointers: `prev`, `slow`, and `next`.
+- Compare the reversed half with the first half.
+- **Note:** This solution modifies the list's links and does not restore them afterward.
