@@ -1,0 +1,26 @@
+# Minimum Window Substring — LeetCode 76
+
+**Pattern:** Variable-Size Sliding Window + Frequency Arrays
+
+## Approach
+- Store the required frequency of every character in `t` using `req[]`.
+- Expand the window by moving `high` and update `avl[]`.
+- When the window contains all required characters, try to shrink it by moving `low`.
+- Whenever a valid window is found, update `minlen` and `sIndex` if it is smaller than the previous minimum.
+- Return the smallest substring, or `""` if no valid window exists.
+
+**Important:** Character frequencies matter. If `t = "AABC"`, the window must contain at least two `A`s, one `B`, and one `C`.
+
+## Java Code
+
+```java
+class Solution {
+    public String minWindow(String s, String t) {
+        if (s.length() < t.length()) return "";
+
+        int[] req = new int[128];
+        int[] avl = new int[128];
+
+        int minlen = Integer.MAX_VALUE;
+
+        for (char ch : t.to
