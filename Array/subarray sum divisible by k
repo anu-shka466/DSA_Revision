@@ -1,0 +1,78 @@
+# Subarray Sums Divisible by K — LeetCode 974
+
+**Pattern:** Prefix Sum + HashMap (Remainder Frequency)
+
+## Approach
+- Maintain `prefixsum`, the cumulative sum of elements.
+- Calculate `rem = prefixsum % k`.
+- If `rem` is negative, add `k` to make it non-negative.
+- If the same remainder appeared before, the elements between those prefix sums have a sum divisible by `k`.
+- Add the frequency of that remainder to `count`.
+- Update the frequency of the current remainder.
+
+**Why does this work?**
+
+If two prefix sums have the same remainder when divided by `k`, their difference is divisible by `k`.
+
+\[
+(PrefixSum_2 - PrefixSum_1) \bmod k = 0
+\]
+
+## Java Code
+
+```java
+class Solution {
+    public int subarraysDivByK(int[] nums, int k) {
+        HashMap<Integer, Integer> freq = new HashMap<>();
+
+        int prefixsum = 0;
+        int count = 0;
+
+        freq.put(0, 1);
+
+        for (int i = 0; i < nums.length; i++) {
+            prefixsum += nums[i];
+
+            int rem = prefixsum % k;
+
+            if (rem < 0) {
+                rem += k;
+            }
+
+            count += freq.getOrDefault(rem, 0);
+
+            freq.put(rem, freq.getOrDefault(rem, 0) + 1);
+        }
+
+        return count;
+    }
+}
+```
+
+## Dry Run
+
+**Input:** `nums = [4, 5, 0, -2, -3, 1]`, `k = 5`
+
+Initially: `freq = {0=1}`, `count = 0`
+
+| Number | Prefix sum | Normalized remainder | Previous frequency | Count |
+|---:|---:|---:|---:|---:|
+| 4 | 4 | 4 | 0 | 0 |
+| 5 | 9 | 4 | 1 | 1 |
+| 0 | 9 | 4 | 2 | 3 |
+| -2 | 7 | 2 | 0 | 3 |
+| -3 | 4 | 4 | 3 | 6 |
+| 1 | 5 | 0 | 1 | 7 |
+
+**Output:** `7`
+
+## Complexity
+- **Time:** \(O(n)\) on average, due to HashMap operations.
+- **Space:** \(O(\min(n,k))\) for storing distinct remainders, assuming positive `k`.
+
+## Key Takeaways
+- Store the **frequency of remainders**, not the prefix sums themselves.
+- `freq.put(0, 1)` handles subarrays starting at index `0`.
+- Negative remainders must be normalized because Java's `%` operator can return a negative value.
+- Count matching remainders **before** incrementing the current remainder's frequency.
+- This assumes `k > 0`, as guaranteed by the usual LeetCode constraints.
