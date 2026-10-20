@@ -1,0 +1,84 @@
+# Maximum Sum Circular Subarray — LeetCode 918
+
+**Pattern:** Kadane's Algorithm + Minimum Subarray Sum
+
+## Approach
+There are two possible cases:
+
+1. **Normal subarray:** The maximum subarray does not wrap around the array. Find it using Kadane's algorithm (`maxsum`).
+2. **Circular subarray:** The maximum subarray wraps around the end to the beginning. Find it by excluding the minimum-sum subarray from the total sum:
+
+   `circularSum = totalSum - minsum`
+
+The answer is the maximum of these two cases.
+
+- Calculate `totalSum`.
+- Use Kadane's algorithm to find `maxsum` and `minsum`.
+- If `totalSum == minsum`, all elements form the minimum-sum subarray. Return `maxsum` to avoid choosing an empty circular subarray.
+- Otherwise, return `max(maxsum, totalSum - minsum)`.
+
+## Java Code
+
+```java
+class Solution {
+    public int maxSubarraySumCircular(int[] nums) {
+        int totalSum = 0;
+
+        int currmin = nums[0];
+        int minsum = nums[0];
+
+        int currmax = nums[0];
+        int maxsum = nums[0];
+
+        for (int num : nums) {
+            totalSum += num;
+        }
+
+        for (int i = 1; i < nums.length; i++) {
+            currmin = Math.min(nums[i], currmin + nums[i]);
+            minsum = Math.min(minsum, currmin);
+
+            currmax = Math.max(nums[i], currmax + nums[i]);
+            maxsum = Math.max(maxsum, currmax);
+        }
+
+        if (totalSum == minsum) {
+            return maxsum;
+        }
+
+        return Math.max(maxsum, totalSum - minsum);
+    }
+}
+```
+
+## Dry Run
+
+**Input:** `nums = [5, -3, 5]`
+
+| Variable | Value |
+|---|---:|
+| `totalSum` | 7 |
+| `maxsum` | 7 |
+| `minsum` | -3 |
+| `totalSum - minsum` | 10 |
+
+**Output:** `10`
+
+The maximum circular subarray is `[5, 5]`, wrapping around the array and skipping `-3`.
+
+Its sum is \(5 + 5 = 10\).
+
+## Why does `totalSum - minsum` work?
+
+Removing the minimum-sum subarray leaves the largest possible sum of the remaining elements. Those remaining elements can form a circular subarray that joins the end and beginning of the array.
+
+## Complexity
+- **Time:** \(O(n)\) — the array is traversed twice.
+- **Space:** \(O(1)\) — only a constant number of variables are used.
+
+## Key Takeaways
+- `maxsum` finds the best non-circular subarray.
+- `totalSum - minsum` finds the best circular subarray.
+- Compare both results to get the answer.
+- The `totalSum == minsum` check handles all-negative arrays and prevents an empty subarray from being selected.
+- Your approach is correct; the only minor improvement is using one loop to calculate `totalSum` and keeping the Kadane calculations in the second loop.
