@@ -1,0 +1,87 @@
+# Shortest Subarray with Sum at Least K — LeetCode 862
+
+**Pattern:** Prefix Sum + Monotonic Increasing Deque
+
+## Approach
+A normal sliding window does not work reliably because `nums` can contain negative numbers.
+
+- Build a prefix sum array where `prefix[i]` is the sum of the first `i` elements.
+- Use a deque to store **indices** of prefix sums in increasing order of their values.
+- For each index `i`:
+  1. **Check the front:** If `prefix[i] - prefix[dq.getFirst()] >= k`, we found a valid subarray. Update the minimum length and remove the front index.
+  2. **Check the back:** If `prefix[i] <= prefix[dq.getLast()]`, remove the back index because it cannot provide a better answer than the current index.
+  3. Add `i` to the back of the deque.
+- Return `-1` if no valid subarray is found.
+
+## Java Code
+
+```java
+class Solution {
+    public int shortestSubarray(int[] nums, int k) {
+        int[] prefix = new int[nums.length + 1];
+        int minlen = Integer.MAX_VALUE;
+
+        for (int i = 0; i < nums.length; i++) {
+            prefix[i + 1] = prefix[i] + nums[i];
+        }
+
+        Deque<Integer> dq = new ArrayDeque<>();
+
+        for (int i = 0; i < prefix.length; i++) {
+
+            // Find valid subarrays
+            while (!dq.isEmpty()
+                    && prefix[i] - prefix[dq.getFirst()] >= k) {
+                minlen = Math.min(minlen, i - dq.pollFirst());
+            }
+
+            // Maintain increasing prefix sums
+            while (!dq.isEmpty()
+                    && prefix[i] <= prefix[dq.getLast()]) {
+                dq.pollLast();
+            }
+
+            dq.addLast(i);
+        }
+
+        return minlen == Integer.MAX_VALUE ? -1 : minlen;
+    }
+}
+```
+
+## Dry Run
+
+**Input:** `nums = [2, -1, 2]`, `k = 3`
+
+Prefix sum array:
+
+`prefix = [0, 2, 1, 3]`
+
+| Index `i` | Prefix sum | Action | Minimum length |
+|---:|---:|---|---:|
+| 0 | 0 | Add index `0` | — |
+| 1 | 2 | Add index `1` | — |
+| 2 | 1 | Remove index `1` from the back because `1 <= 2`; add index `2` | — |
+| 3 | 3 | `3 - 0 >= 3`; subarray length = `3` | 3 |
+| 3 | 3 | `3 - 1 >= 3` is false | 3 |
+
+**Output:** `3`
+
+The entire subarray `[2, -1, 2]` has sum `3`.
+
+## Why use a Deque?
+
+Two important rules make this efficient:
+
+- **Remove from the front:** Once a valid subarray is found, that starting prefix index cannot give a shorter answer in the future than the one already found.
+- **Remove from the back:** If a newer prefix sum is smaller than or equal to an older one, the newer index is a better starting point because it has a smaller or equal prefix sum and is closer to future indices.
+
+## Complexity
+- **Time:** \(O(n)\) — each prefix index enters and leaves the deque at most once.
+- **Space:** \(O(n)\) — the prefix array and deque can each store up to \(n+1\) entries.
+
+## Key Takeaways
+- Prefix sums turn subarray sums into `prefix[right] - prefix[left]`.
+- Negative numbers mean a standard sliding window is not sufficient.
+- The deque maintains increasing prefix sums and helps find the shortest valid subarray efficiently.
+- The prefix array has length `n + 1` so that subarrays starting at index `0` are handled naturally.
