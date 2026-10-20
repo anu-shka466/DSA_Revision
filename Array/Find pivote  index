@@ -1,0 +1,67 @@
+# Find Pivot Index — LeetCode 724
+
+**Pattern:** Prefix Sum
+
+## Approach
+- Calculate the total sum of the array.
+- Maintain `leftSum`, initially `0`.
+- For each index `i`:
+  - Calculate the right sum as `totalSum - leftSum - nums[i]`.
+  - If `leftSum == rightSum`, return `i`.
+  - Otherwise, add `nums[i]` to `leftSum`.
+- If no pivot index is found, return `-1`.
+
+## Java Code
+
+```java
+class Solution {
+    public int pivotIndex(int[] nums) {
+        int totalSum = 0;
+
+        for (int num : nums) {
+            totalSum += num;
+        }
+
+        int leftSum = 0;
+
+        for (int i = 0; i < nums.length; i++) {
+            int rightSum = totalSum - leftSum - nums[i];
+
+            if (leftSum == rightSum) {
+                return i;
+            }
+
+            leftSum += nums[i];
+        }
+
+        return -1;
+    }
+}
+```
+
+## Dry Run
+
+**Input:** `nums = [1, 7, 3, 6, 5, 6]`
+
+Total sum = `28`
+
+| Index | Current value | Left sum | Right sum | Result |
+|---:|---:|---:|---:|---|
+| 0 | 1 | 0 | 27 | No |
+| 1 | 7 | 1 | 20 | No |
+| 2 | 3 | 8 | 17 | No |
+| 3 | 6 | 11 | 11 | Pivot found |
+
+**Output:** `3`
+
+At index `3`, the left sum is `1 + 7 + 3 = 11`, and the right sum is `5 + 6 = 11`.
+
+## Complexity
+- **Time:** \(O(n)\) — two passes through the array.
+- **Space:** \(O(1)\) — only a few variables are used.
+
+## Key Takeaways
+- `leftSum` contains elements strictly before the current index.
+- `rightSum = totalSum - leftSum - nums[i]`.
+- Check each index from left to right to return the **leftmost pivot index**.
+- Edge indices are valid pivots when the sum on the existing side is `0`.
