@@ -1,0 +1,35 @@
+# Maximum Product Subarray — LeetCode 152
+
+**Pattern:** Dynamic Programming + Tracking Minimum and Maximum
+
+## Approach
+- Maintain three variables:
+  - `max`: maximum product of a subarray ending at the current index.
+  - `min`: minimum product of a subarray ending at the current index.
+  - `prod`: maximum product found so far.
+- Why track both `min` and `max`?
+  - A negative number multiplied by a **minimum negative product** can become a large positive product.
+- For each number:
+  - If it is negative, swap `min` and `max`.
+  - Update `max` and `min`.
+  - Update the overall answer `prod`.
+
+**Important correction:** Swap `min` and `max` whenever the current number is negative. The condition `min != max` is unnecessary and can cause incorrect results.
+
+## Java Code
+
+```java
+class Solution {
+    public int maxProduct(int[] nums) {
+        int min = nums[0];
+        int max = nums[0];
+        int prod = nums[0];
+
+        for (int i = 1; i < nums.length; i++) {
+            if (nums[i] < 0) {
+                int temp = max;
+                max = min;
+                min = temp;
+            }
+
+            min = Math.min(nums[i], min *
