@@ -1,0 +1,90 @@
+# Lowest Common Ancestor of a Binary Tree — LeetCode 236
+
+## Pattern
+Binary Tree + DFS + Postorder Traversal
+
+## Approach
+1. If the current node is `null`, return `0`.
+2. Recursively search the left and right subtrees.
+3. If the current node equals `p` or `q`, count it as `1` using `self`.
+4. Calculate `total = left + right + self`.
+5. If `total == 2` and `ans == null`, the current node is the LCA.
+6. Return `total` to the parent.
+
+**Why `total == 2`?**  
+It means both target nodes have been found in the current node's subtree, either in separate subtrees or with one target being the current node itself.
+
+## Java Code
+
+```java
+class Solution {
+    TreeNode ans = null;
+
+    public TreeNode lowestCommonAncestor(
+            TreeNode root, TreeNode p, TreeNode q) {
+
+        if (root == null) return null;
+
+        LCA(root, p, q);
+        return ans;
+    }
+
+    public int LCA(TreeNode root, TreeNode p, TreeNode q) {
+        if (root == null) return 0;
+
+        int left = LCA(root.left, p, q);
+        int right = LCA(root.right, p, q);
+
+        int self = 0;
+
+        if (root == p || root == q) {
+            self = 1;
+        }
+
+        int total = left + right + self;
+
+        if (total == 2 && ans == null) {
+            ans = root;
+        }
+
+        return total;
+    }
+}
+```
+
+## Dry Run
+
+Tree:
+
+```text
+        3
+       / \
+      5   1
+     / \ / \
+    6  2 0  8
+      / \
+     7   4
+```
+
+Given: `p = 5`, `q = 4`
+
+- At node `5`, `self = 1`.
+- Its left subtree contains neither target, so `left = 0`.
+- Its right subtree contains node `4`, so `right = 1`.
+- `total = 1 + 1 + 0 = 2` at node `5`? More precisely, node `5` has `self = 1`, `left = 0`, and `right = 1`, giving `total = 2`.
+- Therefore, `ans = 5`.
+
+Output: `5`
+
+## Complexity
+
+- **Time:** `O(n)` — every node is visited once.
+- **Space:** `O(h)` — recursion stack, where `h` is the tree height. Worst case: `O(n)`.
+
+## Key Takeaways
+
+- This solution uses **postorder DFS**: left subtree → right subtree → current node.
+- `self` counts whether the current node is one of the targets.
+- `total == 2` identifies a node whose subtree contains both targets.
+- `ans == null` ensures the first such node found from the bottom is retained as the LCA.
+- `root == p` compares node references, not just their values.
