@@ -1,0 +1,68 @@
+# Invert Binary Tree — LeetCode 226
+
+**Pattern:** Binary Tree + DFS + Recursion
+
+## Approach
+- If `root == null`, return `root`.
+- Swap the left and right children of the current node using a temporary variable.
+- Recursively invert the left subtree.
+- Recursively invert the right subtree.
+- Return the root of the inverted tree.
+
+## Java Code
+
+```java
+class Solution {
+    public TreeNode invertTree(TreeNode root) {
+        if (root == null) return root;
+
+        TreeNode temp = root.left;
+        root.left = root.right;
+        root.right = temp;
+
+        invertTree(root.left);
+        invertTree(root.right);
+
+        return root;
+    }
+}
+```
+
+## Dry Run
+
+**Input:**
+
+```text
+      4
+     / \
+    2   7
+   / \ / \
+  1  3 6  9
+```
+
+Swap the children at every node:
+
+1. At `4`: swap `2` and `7`.
+2. At `7`: swap `6` and `9`.
+3. At `2`: swap `1` and `3`.
+4. Leaf nodes have no children to swap.
+
+**Output:**
+
+```text
+      4
+     / \
+    7   2
+   / \ / \
+  9  6 3  1
+```
+
+## Complexity
+- **Time:** \(O(n)\) — every node is visited once.
+- **Space:** \(O(h)\) — recursion stack, where `h` is the tree height; worst case \(O(n)\).
+
+## Key Takeaways
+- Inverting a tree means swapping the left and right children of every node.
+- Swap the current node's children **before** recursively processing its subtrees.
+- The tree is modified in place, so no additional tree is created.
+- Your solution is correct and optimal in time complexity.
