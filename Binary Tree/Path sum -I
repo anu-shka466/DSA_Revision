@@ -1,0 +1,71 @@
+# Path Sum — LeetCode 112
+
+## Pattern
+Binary Tree + DFS + Recursion
+
+## Approach
+1. If `root == null`, return `false`.
+2. Add the current node's value to the running sum.
+3. Check whether the current node is a **leaf**.
+4. If it is a leaf and `sum == targetSum`, return `true`.
+5. Recursively check the left and right subtrees.
+6. Return `true` if either subtree contains a valid path.
+
+**Important:** The path must start at the root and end at a leaf. Reaching the target sum at a non-leaf node is not enough.
+
+## Java Code
+
+```java
+class Solution {
+    public boolean hasPathSum(TreeNode root, int targetSum) {
+        if (root == null) return false;
+
+        if (root.left == null && root.right == null) {
+            return root.val == targetSum;
+        }
+
+        int remaining = targetSum - root.val;
+
+        return hasPathSum(root.left, remaining)
+            || hasPathSum(root.right, remaining);
+    }
+}
+```
+
+## Dry Run
+
+Tree:
+
+```text
+        5
+       / \
+      4   8
+     /   / \
+    11  13  4
+   /  \       \
+  7    2       1
+```
+
+`targetSum = 22`
+
+1. Start at `5`: remaining sum = `22 - 5 = 17`.
+2. Go left to `4`: remaining sum = `17 - 4 = 13`.
+3. Go left to `11`: remaining sum = `13 - 11 = 2`.
+4. Go right to `2`: remaining sum = `2 - 2 = 0`.
+5. Node `2` is a leaf and the remaining sum is `0`.
+
+Output: `true`
+
+Valid path: `5 → 4 → 11 → 2`
+
+## Complexity
+
+- **Time:** `O(n)` — each node is visited at most once.
+- **Space:** `O(h)` — recursion stack, where `h` is the tree height. Worst case: `O(n)`.
+
+## Key Takeaways
+
+- Your original approach is logically correct for a single call, but the instance variable `res` can retain `true` across repeated calls on the same object.
+- Returning a boolean directly avoids this problem and stops searching once a valid path is found.
+- Check the sum **only at leaf nodes**.
+- Subtracting each node's value from `targetSum` avoids maintaining a separate running sum.
