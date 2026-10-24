@@ -1,0 +1,82 @@
+# Search in a Binary Search Tree — LeetCode 700
+
+## Pattern
+Binary Search Tree (BST) + DFS + Recursion
+
+## Approach
+1. If `root == null`, return `null`.
+2. If `root.val == val`, the target is found. Store `root` in `ans`.
+3. If `root.val > val`, search the left subtree.
+4. Otherwise, search the right subtree.
+5. Return `ans`.
+
+**Why does this work?**
+
+In a BST:
+- Left subtree values are smaller than the root.
+- Right subtree values are greater than the root.
+
+Therefore, we only need to search one subtree at each step.
+
+## Java Code
+
+```java
+class Solution {
+    TreeNode ans = null;
+
+    public TreeNode searchBST(TreeNode root, int val) {
+        if (root == null) return root;
+
+        search(root, val);
+        return ans;
+    }
+
+    public void search(TreeNode root, int val) {
+        if (root == null) return;
+
+        if (root.val == val) {
+            ans = root;
+            return;
+        } else if (root.val > val) {
+            search(root.left, val);
+        } else {
+            search(root.right, val);
+        }
+    }
+}
+```
+
+## Dry Run
+
+BST:
+
+```text
+        4
+       / \
+      2   7
+     / \   \
+    1   3   9
+```
+
+Target: `val = 3`
+
+1. `root.val = 4` → `4 > 3`, go left.
+2. `root.val = 2` → `2 < 3`, go right.
+3. `root.val = 3` → target found.
+4. Return the subtree rooted at node `3`.
+
+Output: `3`
+
+## Complexity
+
+- **Time:** `O(h)` — where `h` is the height of the BST.
+  - Average balanced BST: `O(log n)`
+  - Worst case: `O(n)`
+- **Space:** `O(h)` — recursion stack.
+
+## Key Takeaways
+
+- BST properties let us eliminate half the search path at each node.
+- Return the **subtree rooted at the matching node**, not just its value.
+- If the target doesn't exist, return `null`.
+- Your solution is correct. An alternative is to return the result directly from recursion without using the instance variable `ans`.
