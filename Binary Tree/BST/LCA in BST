@@ -1,0 +1,76 @@
+# Lowest Common Ancestor of a Binary Search Tree — LeetCode 235
+
+## Pattern
+Binary Search Tree (BST) + DFS + Recursion
+
+## Approach
+1. If `root == null`, return `null`.
+2. Ensure `p.val <= q.val` by swapping the nodes if necessary.
+3. If `root.val < p.val`, both nodes are on the right side. Search right.
+4. If `root.val > q.val`, both nodes are on the left side. Search left.
+5. Otherwise, the current root is the LCA because the nodes lie on different sides, or one of them is the current node.
+
+## Corrected Java Code
+
+```java
+class Solution {
+    public TreeNode lowestCommonAncestor(
+            TreeNode root, TreeNode p, TreeNode q) {
+
+        if (root == null) return null;
+
+        if (p.val > q.val) {
+            TreeNode temp = p;
+            p = q;
+            q = temp;
+        }
+
+        if (root.val < p.val) {
+            return lowestCommonAncestor(root.right, p, q);
+        }
+
+        if (root.val > q.val) {
+            return lowestCommonAncestor(root.left, p, q);
+        }
+
+        return root;
+    }
+}
+```
+
+## Dry Run
+
+BST:
+
+```text
+        6
+       / \
+      2   8
+     / \ / \
+    0  4 7  9
+      / \
+     3   5
+```
+
+Given: `p = 2`, `q = 4`
+
+1. `p.val < q.val`, so no swap.
+2. At node `6`, `6 > 4`, so move left.
+3. At node `2`, the current value lies between `p.val` and `q.val`, including equality.
+4. Return node `2`.
+
+Output: `2`
+
+## Complexity
+
+- **Time:** `O(h)` — where `h` is the BST height.
+  - Balanced BST: `O(log n)`
+  - Worst case: `O(n)`
+- **Space:** `O(h)` — recursion stack.
+
+## Key Takeaways
+
+- Sorting `p` and `q` by value is optional; it just simplifies comparisons.
+- Your original code's main issue is that it doesn't return the recursive result directly and relies on an instance variable `ans`.
+- The final `else` case can simply return `root`; separate strict-between checks are unnecessary because equality is already handled.
+- The solution works when one target node is the ancestor of the other.
