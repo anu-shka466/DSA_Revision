@@ -1,0 +1,68 @@
+# Symmetric Tree — LeetCode 101
+
+**Pattern:** Binary Tree + DFS + Recursion
+
+## Approach
+- An empty tree is symmetric, so return `true` if `root == null`.
+- Compare the left and right subtrees using a helper function.
+- Base cases:
+  - Both nodes are `null` → return `true`.
+  - Only one node is `null` → return `false`.
+  - Node values differ → return `false`.
+- Recursively compare:
+  - `left.left` with `right.right`
+  - `left.right` with `right.left`
+- Both comparisons must be `true`.
+
+## Java Code
+
+```java
+class Solution {
+    public boolean isSymmetric(TreeNode root) {
+        if (root == null) return true;
+
+        return symmetry(root.left, root.right);
+    }
+
+    public boolean symmetry(TreeNode left, TreeNode right) {
+        if (left == null && right == null) return true;
+        if (left == null || right == null) return false;
+
+        if (left.val != right.val) return false;
+
+        return symmetry(left.left, right.right)
+            && symmetry(left.right, right.left);
+    }
+}
+```
+
+## Dry Run
+
+Consider the tree:
+
+```text
+        1
+       / \
+      2   2
+     / \ / \
+    3  4 4  3
+```
+
+1. Compare root's children: `2 == 2`.
+2. Compare outer children: `3 == 3`.
+3. Compare inner children: `4 == 4`.
+4. All corresponding subtrees are symmetric.
+
+**Output:** `true`
+
+If the rightmost node were `5` instead of `3`, the result would be `false`.
+
+## Complexity
+- **Time:** \(O(n)\) — each node is visited at most once.
+- **Space:** \(O(h)\) — recursion stack, where `h` is the tree height; worst case \(O(n)\).
+
+## Key Takeaways
+- A symmetric tree is a mirror image around its center.
+- Compare **outer nodes** (`left.left`, `right.right`) and **inner nodes** (`left.right`, `right.left`).
+- Equal root values alone do not guarantee symmetry; the entire structure and corresponding values must match.
+- Your solution is correct and optimal in time complexity.
