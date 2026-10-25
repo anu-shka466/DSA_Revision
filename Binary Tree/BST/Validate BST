@@ -1,0 +1,92 @@
+# Validate Binary Search Tree — LeetCode 98
+
+## Pattern
+Binary Tree + DFS + Inorder Traversal
+
+## Approach
+1. If `root == null`, return `true`.
+2. Recursively validate the left subtree.
+3. Compare the current node with `prev`.
+   - If `prev.val >= root.val`, the BST is invalid.
+4. Update `prev = root`.
+5. Recursively validate the right subtree.
+
+**Why does this work?**
+
+Inorder traversal of a valid BST produces values in **strictly increasing order**.
+
+For example, inorder traversal of a valid BST:
+
+`1 → 2 → 3 → 4 → 5`
+
+If any value is less than or equal to the previous value, the tree is not a valid BST.
+
+## Java Code
+
+```java
+class Solution {
+    TreeNode prev = null;
+
+    public boolean isValidBST(TreeNode root) {
+        if (root == null) return true;
+
+        if (!isValidBST(root.left)) return false;
+
+        if (prev != null && prev.val >= root.val) {
+            return false;
+        }
+
+        prev = root;
+
+        return isValidBST(root.right);
+    }
+}
+```
+
+## Dry Run
+
+Tree:
+
+```text
+        2
+       / \
+      1   3
+```
+
+Inorder traversal:
+
+1. Visit node `1`: `prev == null`, so update `prev = 1`.
+2. Visit node `2`: `1 >= 2` is false, so update `prev = 2`.
+3. Visit node `3`: `2 >= 3` is false, so update `prev = 3`.
+4. All nodes satisfy the condition.
+
+Output: `true`
+
+Invalid example:
+
+```text
+        5
+       / \
+      1   7
+         / \
+        4   8
+```
+
+Inorder traversal: `1 → 5 → 4 → 7 → 8`
+
+When visiting `4`, `prev.val = 5`, and `5 >= 4` is true.
+
+Output: `false`
+
+## Complexity
+
+- **Time:** `O(n)` — each node is visited at most once.
+- **Space:** `O(h)` — recursion stack, where `h` is the tree height. Worst case: `O(n)`.
+
+## Key Takeaways
+
+- Your solution is correct.
+- Inorder traversal of a valid BST must be strictly increasing.
+- `prev` stores the previously visited node, not the parent.
+- Use `>=` because duplicate values are not allowed.
+- **Important:** If the same `Solution` object is reused for multiple calls, reset `prev = null` at the beginning of `isValidBST()` to avoid carrying state from a previous call.
