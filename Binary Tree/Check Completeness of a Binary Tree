@@ -1,0 +1,102 @@
+# Check Completeness of a Binary Tree — LeetCode 958
+
+## Pattern
+Binary Tree + BFS + Queue
+
+## Approach
+1. If `root == null`, return `true`.
+2. Use a queue to traverse the tree level by level.
+3. Maintain a boolean `found`, initially `false`, to track whether a `null` node has been encountered.
+4. If the current node is `null`, set `found = true`.
+5. If the current node is not `null` but `found == true`, return `false`.
+6. Otherwise, add the current node's left and right children to the queue.
+7. If traversal finishes without violating the condition, return `true`.
+
+**Why does this work?**
+
+In a complete binary tree, level-order traversal must encounter all actual nodes before encountering any missing child positions. Once a `null` appears, every subsequent position must also be `null`.
+
+## Java Code
+
+```java
+import java.util.LinkedList;
+import java.util.Queue;
+
+class Solution {
+    public boolean isCompleteTree(TreeNode root) {
+        if (root == null) return true;
+
+        boolean found = false;
+        Queue<TreeNode> q = new LinkedList<>();
+        q.offer(root);
+
+        while (!q.isEmpty()) {
+            TreeNode curr = q.poll();
+
+            if (curr == null) {
+                found = true;
+            } else {
+                if (found) return false;
+
+                q.offer(curr.left);
+                q.offer(curr.right);
+            }
+        }
+
+        return true;
+    }
+}
+```
+
+## Dry Run
+
+Complete tree:
+
+```text
+        1
+       / \
+      2   3
+     / \
+    4   5
+```
+
+Queue processing:
+
+1. Process `1` → add `2, 3`.
+2. Process `2` → add `4, 5`.
+3. Process `3` → add `null, null`.
+4. Process `4, 5` → add four `null` entries.
+5. The first `null` sets `found = true`. All remaining entries are `null`.
+
+Output: `true`
+
+Now consider an incomplete tree:
+
+```text
+        1
+       / \
+      2   3
+       \ 
+        5
+```
+
+After processing node `2`, its left child is `null`. Later, node `5` is encountered, so the method returns `false`.
+
+## Why use `LinkedList` instead of `ArrayDeque`?
+
+**Yes, exactly!** Java's `LinkedList` allows `null` elements, whereas `ArrayDeque` does **not** allow `null` elements.
+
+Here, we intentionally enqueue `curr.left` and `curr.right` even when they are `null`, because those missing positions help us detect whether the tree is complete.
+
+## Complexity
+
+- **Time:** `O(n)` — each node is processed once, along with its child positions.
+- **Space:** `O(n)` — the queue can hold up to `O(n)` entries.
+
+## Key Takeaways
+
+- BFS checks nodes in level-order.
+- Once a `null` is encountered, no non-null node should appear afterward.
+- `LinkedList` is suitable because it permits `null` queue elements.
+- `ArrayDeque` is generally preferred for queues when `null` elements are not needed.
+- Your approach is correct.
