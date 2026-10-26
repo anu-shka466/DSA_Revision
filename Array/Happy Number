@@ -1,48 +1,76 @@
-# Find the Duplicate Number — LeetCode 287
+# Happy Number — LeetCode 202
 
-**Pattern:** Fast and Slow Pointers (Floyd's Cycle Detection)
+## Pattern
+HashSet + Digit Manipulation + Cycle Detection
 
-**Approach:** Treat each array value as the index of the next element. The duplicate creates a cycle. First find the meeting point, then locate the cycle's entrance.
+## Approach
+1. Create a `HashSet` to store numbers already visited.
+2. While `n != 1`:
+   - Calculate the sum of the squares of its digits.
+   - If the new sum already exists in the set, a cycle has been detected. Return `false`.
+   - Otherwise, update `n` with the new sum and add it to the set.
+3. If `n` becomes `1`, return `true`.
+
+**Why use a HashSet?**
+
+Some numbers enter an infinite cycle instead of reaching `1`. The set helps detect when a number repeats, so we can stop the loop.
 
 ## Java Code
+
 ```java
+import java.util.HashSet;
+
 class Solution {
-    public int findDuplicate(int[] nums) {
-        int slow = nums[0];
-        int fast = nums[0];
+    public boolean isHappy(int n) {
+        HashSet<Integer> set = new HashSet<>();
+        set.add(n);
 
-        // Find the meeting point
-        do {
-            slow = nums[slow];
-            fast = nums[nums[fast]];
-        } while (slow != fast);
+        while (n != 1) {
+            int newsum = 0;
 
-        // Find the cycle entrance
-        slow = nums[0];
+            while (n > 0) {
+                int digit = n % 10;
+                n = n / 10;
+                newsum += digit * digit;
+            }
 
-        while (slow != fast) {
-            slow = nums[slow];
-            fast = nums[fast];
+            if (set.contains(newsum)) return false;
+
+            n = newsum;
+            set.add(newsum);
         }
 
-        return slow;
+        return true;
     }
 }
 ```
 
-## How It Works
-1. `slow` moves one step: `nums[slow]`.
-2. `fast` moves two steps: `nums[nums[fast]]`.
-3. When they meet, reset `slow` to `nums[0]`.
-4. Move both pointers one step at a time.
-5. Their next meeting point is the duplicate number.
+## Dry Run
+
+Input: `n = 19`
+
+| Number | Sum of squared digits |
+|---:|---|
+| 19 | \(1^2 + 9^2 = 82\) |
+| 82 | \(8^2 + 2^2 = 68\) |
+| 68 | \(6^2 + 8^2 = 100\) |
+| 100 | \(1^2 + 0^2 + 0^2 = 1\) |
+
+Since the number reaches `1`, return `true`.
+
+Output: `true`
 
 ## Complexity
-- **Time:** O(n)
-- **Space:** O(1)
+
+Let `d` be the number of distinct values encountered before reaching `1` or detecting a cycle.
+
+- **Time:** `O(d × digits)` — each value requires processing its digits.
+- **Space:** `O(d)` — the HashSet stores visited values.
 
 ## Key Takeaways
-- Do not modify the array.
-- Do not use a `HashSet` because extra space must be constant.
-- The values range from `1` to `n`, so they can be treated as next-index links.
-- This problem uses the same cycle-detection concept as Linked List Cycle II.
+
+- `n % 10` extracts the last digit.
+- `n / 10` removes the last digit.
+- `digit * digit` calculates the square of a digit.
+- `HashSet` detects repeated numbers and prevents infinite loops.
+- Your solution is correct for positive integers.
